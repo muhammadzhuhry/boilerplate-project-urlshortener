@@ -32,11 +32,15 @@ app.get('/', function (req, res) {
   res.sendFile(`${process.cwd()}/views/index.html`);
 });
 
+// Your first API endpoint
+app.get('/api/hello', function(req, res) {
+  res.json({ greeting: 'hello API' });
+});
+
 // Response for POST request
-app.post('/api/shorturl/new', async (req, res) => {
+app.post('/api/shorturl', async (req, res) => {
   const { url } = req.body;
   const shortURL = shortID.generate();
-  console.log(validURL.isUri(url));
   if (validURL.isWebUri(url) === undefined) {
     res.json({
       error: 'invalid url',
@@ -63,17 +67,10 @@ app.post('/api/shorturl/new', async (req, res) => {
         });
       }
     } catch (err) {
-      console.log(err);
       res.status(500).json('Server error..');
     }
   }
 });
-
-// Your first API endpoint
-app.get('/api/hello', function(req, res) {
-  res.json({ greeting: 'hello API' });
-});
-
 
 // Redirect shortened URL to Original URL
 app.get('/api/shorturl/:shortURL?', async (req, res) => {
@@ -86,7 +83,6 @@ app.get('/api/shorturl/:shortURL?', async (req, res) => {
     }
     return res.status(404).json('No URL found');
   } catch (err) {
-    console.log(err);
     res.status(500).json('Server error..');
   }
 });
